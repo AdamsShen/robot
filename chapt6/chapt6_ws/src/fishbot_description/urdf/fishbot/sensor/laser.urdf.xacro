@@ -1,0 +1,110 @@
+<?xml version="1.0"?>   <!-- xml格式声明-->
+<!-- 注意xacro不能直接用，必须要先将xacro转换成urdf才能使用 可以使用命令xacro /home/adams/chapt6/chapt6_ws/src/fishbot_description/urdf/first_robot.xacro 来生成对应urdf文件-->
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">  <!--xmlns:xacro="http://www.ros.org/wiki/xacro" 是告诉大家这个urdf使用了宏语言了-->
+     <!-- 引入描述质量和惯性的宏定义文件 -->
+    <xacro:include filename="$(find fishbot_description)/urdf/fishbot/common_inertia.xacro"/>   <!--$(find fishbot_description)表示找到share目录下的fishbot_description(功能包的名字)目录-->
+
+    <xacro:macro name="laser_xacro" params="xyz">
+        <gazebo reference="laser_cylinder_link">  <!--reference表示参考的部件的名称-->
+            <material>Gazebo/Black</material>  <!--设置部件的材质颜色-->
+        </gazebo>
+        <gazebo reference="laser_link">
+            <material>Gazebo/Black</material>
+        </gazebo>
+
+        <!-- 雷达支撑杆 -->
+        <link name="laser_cylinder_link">  <!--子部件-->
+            <!--  部件的外观描述 -->
+            <visual>
+                <!-- 沿着自己几何中心的偏移和旋转量 xyz表示偏移 rpy表示旋转(欧拉角表示)-->
+                <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+                <!-- 几何形状 -->
+                <geometry>
+                    <!-- 圆柱体 radius半径，length高度 单位是m-->
+                    <cylinder radius="0.01" length="0.10"/>
+                </geometry>
+                <!-- 材质颜色描述 -->
+                <material name="black">
+                    <!-- 颜色 红绿蓝和透明度，取值范围0.0-1.0   1.0表示不透明 -->
+                    <color rgba="0.0 0.0 0.0 1.0"/>
+                </material>
+            </visual>
+            <!-- 碰撞属性 -->
+            <collision>
+                <!-- 沿着自己几何中心的偏移和旋转量 xyz表示偏移 rpy表示旋转(欧拉角表示)-->
+                <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+                <!-- 几何形状 -->
+                <geometry>
+                    <!-- 圆柱体 radius半径，length高度 单位是m-->
+                    <cylinder radius="0.01" length="0.10"/>
+                </geometry>
+                <!-- 材质颜色描述 -->
+                <material name="black">
+                    <!-- 颜色 红绿蓝和透明度，取值范围0.0-1.0   1.0表示不透明 -->
+                    <color rgba="0.0 0.0 0.0 1.0"/>
+                </material>
+            </collision>
+
+            <!-- 设置质量和惯性 -->
+            <xacro:cylinder_inertia m="0.05" r="0.01" h="0.10"/>
+        </link>
+
+        <!-- 雷达 -->
+        <link name="laser_link">  <!--子部件-->
+            <!--  部件的外观描述 -->
+            <visual>
+                <!-- 沿着自己几何中心的偏移和旋转量 xyz表示偏移 rpy表示旋转(欧拉角表示)-->
+                <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+                <!-- 几何形状 -->
+                <geometry>
+                    <!-- 圆柱体 radius半径，length高度 单位是m-->
+                    <cylinder radius="0.02" length="0.02"/>
+                </geometry>
+                <!-- 材质颜色描述 -->
+                <material name="black">
+                    <!-- 颜色 红绿蓝和透明度，取值范围0.0-1.0   1.0表示不透明 -->
+                    <color rgba="0.0 0.0 0.0 1.0"/>
+                </material>
+            </visual>
+            <!-- 碰撞属性 -->
+            <collision>
+             <!-- 沿着自己几何中心的偏移和旋转量 xyz表示偏移 rpy表示旋转(欧拉角表示)-->
+                <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+                <!-- 几何形状 -->
+                <geometry>
+                    <!-- 圆柱体 radius半径，length高度 单位是m-->
+                    <cylinder radius="0.02" length="0.02"/>
+                </geometry>
+                <!-- 材质颜色描述 -->
+                <material name="black">
+                    <!-- 颜色 红绿蓝和透明度，取值范围0.0-1.0   1.0表示不透明 -->
+                    <color rgba="0.0 0.0 0.0 1.0"/>
+                </material>
+            </collision>
+
+            <!-- 设置质量和惯性 -->
+            <xacro:cylinder_inertia m="0.10" r="0.02" h="0.02"/>
+        </link>
+        
+        <!-- 机器人的关节，用于组合机器人的部件 -->
+        <joint name="laser_jonit" type="fixed">  <!--fixed表示固定死的-->
+            <!-- 目前的意思表示将laser_link固定在laser_cylinder_link上面 将雷达固定到了雷达支撑杆上-->
+            <parent link="laser_cylinder_link"/> <!--父部件-->
+            <child link="laser_link"/> <!--子部件-->
+            <!-- 固定的位置，偏移和旋转 -->
+            <origin xyz="0.0 0.0 0.05" rpy="0.0 0.0 0.0"/>
+        </joint>
+
+        <!-- 机器人的关节，用于组合机器人的部件 -->
+        <joint name="laser_cylinder_jonit" type="fixed">  <!--fixed表示固定死的-->
+            <!-- 目前的意思表示将laser_cylinder_link固定在base_link上面 将雷达支撑杆固定到base_link上-->
+            <parent link="base_link"/> <!--父部件-->
+            <child link="laser_cylinder_link"/> <!--子部件-->
+            <!-- 固定的位置，偏移和旋转 -->
+            <origin xyz="${xyz}" rpy="0.0 0.0 0.0"/>
+        </joint>
+
+    </xacro:macro>
+</robot>
+
+

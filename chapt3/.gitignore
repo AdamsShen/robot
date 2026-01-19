@@ -1,0 +1,57 @@
+# ROS 2 Build Artifacts
+build/
+install/
+log/
+
+# Colcon artifacts
+.colcon_install_layout
+
+# Python cache files
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# C++ build artifacts
+*.o
+*.a
+*.so
+*.exe
+*.out
+*.app
+
+# CMake
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+Makefile
+
+# IDE and Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Pytest
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Virtual environments
+venv/
+env/
+ENV/
+
+# Backup files
+*.bak
+*.orig
+
+# Log files
+*.log
+
+# OS files
+Thumbs.db
+.directory

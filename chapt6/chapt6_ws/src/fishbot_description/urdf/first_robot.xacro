@@ -1,0 +1,64 @@
+<?xml version="1.0"?>   <!-- xml格式声明-->
+<!-- 注意xacro不能直接用，必须要先将xacro转换成urdf才能使用 可以使用命令xacro /home/adams/chapt6/chapt6_ws/src/fishbot_description/urdf/first_robot.xacro 来生成对应urdf文件-->
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="first_robot">  <!--xmlns:xacro="http://www.ros.org/wiki/xacro" 是告诉大家这个urdf使用了宏语言了-->
+    <xacro:macro name="base_link" params="length radius">
+        <!--机器人身体部分-->
+        <link name="base_link">  <!--子部件-->
+        <!--  部件的外观描述 -->
+        <visual>
+            <!-- 沿着自己几何中心的偏移和旋转量 xyz表示偏移 rpy表示旋转(欧拉角表示)-->
+            <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+            <!-- 几何形状 -->
+            <geometry>
+                <!-- 圆柱体 radius半径，length高度 单位是m-->
+                <cylinder radius="${radius}" length="${length}"/>
+            </geometry>
+            <!-- 材质颜色描述 -->
+            <material name="white">
+                <!-- 颜色 红绿蓝和透明度，取值范围0.0-1.0   0.5表示半透明 -->
+                <color rgba="1.0 1.0 1.0 0.5"/>
+            </material>
+        </visual>
+    </link>
+    </xacro:macro>
+
+    <xacro:macro name="imu_link" params="imu_name xyz">
+        <!-- 机器人的IMU部件，惯性测量单元传感器 -->
+        <link name="${imu_name}_link">  <!--子部件-->
+            <!--  部件的外观描述 -->
+            <visual>
+                <!-- 沿着自己几何中心的偏移和旋转量 xyz表示偏移 rpy表示旋转(欧拉角表示)-->
+                <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+                <!-- 几何形状 -->
+                <geometry>
+                    <!-- 正方体 0.02表示2cm-->
+                <box size="0.02 0.02 0.02"/>
+                </geometry>
+                <!-- 材质颜色描述 -->
+                <material name="black">
+                    <!-- 颜色 红绿蓝和透明度，取值范围0.0-1.0   0.5表示半透明 -->
+                    <color rgba="0.0 0.0 0.0 0.5"/>
+                </material>
+            </visual>
+        </link>
+        
+        <!-- 机器人的关节，用于组合机器人的部件，此处将imu_link和base_link进行组合 -->
+        <joint name="${imu_name}_jonit" type="fixed">  <!--fixed表示固定死的-->
+            <!-- 目前的意思表示将imu_link固定在base_link上面 -->
+            <parent link="base_link"/> <!--父部件-->
+            <child link="${imu_name}_link"/> <!--子部件-->
+            <!-- 固定的位置，偏移和旋转    0.03表示将imu_link固定在base_link几何中心向上3cm的地方-->
+            <origin xyz="${xyz}" rpy="0.0 0.0 0.0"/>
+        </joint>
+    </xacro:macro>
+    
+    <!--调用宏，传递参数调用 base_link 模块-->
+    <xacro:base_link length="0.12" radius="0.1"/>
+    <!--调用宏，传递参数调用 imu_link 模块-->
+    <xacro:imu_link imu_name="imu_up" xyz="0.0 0.0 0.03"/>
+    <!--调用宏，传递参数调用 imu_link 模块-->
+    <xacro:imu_link imu_name="imu_down" xyz="0.0 0.0 -0.03"/>
+
+</robot>
+
+

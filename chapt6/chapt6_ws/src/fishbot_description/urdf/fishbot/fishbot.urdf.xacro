@@ -1,0 +1,38 @@
+<?xml version="1.0"?>   <!-- xml格式声明-->
+<!-- 注意xacro不能直接用，必须要先将xacro转换成urdf才能使用 可以使用命令xacro /home/adams/chapt6/chapt6_ws/src/fishbot_description/urdf/first_robot.xacro 来生成对应urdf文件-->
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="fishbot">  <!--xmlns:xacro="http://www.ros.org/wiki/xacro" 是告诉大家这个urdf使用了宏语言了-->
+<!-- 组装其他宏定义组件 -->
+<!-- 基础部分，身体部分 base_link -->
+<xacro:include filename="$(find fishbot_description)/urdf/fishbot/base.urdf.xacro"/>   <!--$(find fishbot_description)表示找到share目录下的fishbot_description(功能包的名字)目录-->
+<!-- 传感器中的相机部分 -->
+<xacro:include filename="$(find fishbot_description)/urdf/fishbot/sensor/camera.urdf.xacro"/>   <!--$(find fishbot_description)表示找到share目录下的fishbot_description(功能包的名字)目录-->
+<!-- 传感器中的惯性测量单元部分 -->
+<xacro:include filename="$(find fishbot_description)/urdf/fishbot/sensor/imu.urdf.xacro"/>   <!--$(find fishbot_description)表示找到share目录下的fishbot_description(功能包的名字)目录-->
+<!-- 传感器中的雷达部分 -->
+<xacro:include filename="$(find fishbot_description)/urdf/fishbot/sensor/laser.urdf.xacro"/>   <!--$(find fishbot_description)表示找到share目录下的fishbot_description(功能包的名字)目录-->
+<!-- 执行器中的轮子 -->
+<xacro:include filename="$(find fishbot_description)/urdf/fishbot/actuator/wheel.urdf.xacro"/>   <!--$(find fishbot_description)表示找到share目录下的fishbot_description(功能包的名字)目录-->
+<!-- 执行器中的万向轮 -->
+<xacro:include filename="$(find fishbot_description)/urdf/fishbot/actuator/caster.urdf.xacro"/>   <!--$(find fishbot_description)表示找到share目录下的fishbot_description(功能包的名字)目录-->
+
+<!-- 插件 控制机器人运动插件-->
+<xacro:include filename="$(find fishbot_description)/urdf/fishbot/plugins/gazebo_control_plugin.xacro"/>   <!--$(find fishbot_description)表示找到share目录下的fishbot_description(功能包的名字)目录-->
+<!-- 插件 机器人的传感器插件-->
+<xacro:include filename="$(find fishbot_description)/urdf/fishbot/plugins/gazebo_sensor_plugin.xacro"/>   <!--$(find fishbot_description)表示找到share目录下的fishbot_description(功能包的名字)目录-->
+
+
+<!-- 调用宏 -->
+<xacro:base_xacro length="0.12" radius="0.10"/>
+<xacro:imu_xacro xyz="0.0 0.0 0.02"/>
+<xacro:camera_xacro xyz="0.10 0.0 0.075"/>
+<xacro:laser_xacro xyz="0.0 0.0 0.10"/>
+<xacro:wheel_xacro wheel_name="left_wheel" xyz="0.0 0.10 -0.06"/>  <!--0.10 表示沿着Y轴偏移0.10 -0.06表示沿着Z轴向下偏移0.06-->
+<xacro:wheel_xacro wheel_name="right_wheel" xyz="0.0 -0.10 -0.06"/> <!--  -0.10 表示沿着Y轴反方向偏移0.10 -0.06表示沿着Z轴向下偏移0.06-->
+<!-- 万向轮部分 -->
+<xacro:caster_xacro caster_name="front_caster" xyz="0.08 0.0 -0.076"/> <!--0.08 表示沿着X轴反方向偏移0.08 -0.076表示沿着Z轴向下偏移0.076-->
+<xacro:caster_xacro caster_name="back_caster" xyz="-0.08 0.0 -0.076"/> <!--   -0.08 表示沿着X轴反方向偏移0.08 -0.076表示沿着Z轴向下偏移0.076-->
+
+<!-- 使用插件 -->
+<xacro:gazebo_control_plugin />
+<xacro:gazebo_sensor_plugin />
+</robot>

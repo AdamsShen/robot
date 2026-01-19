@@ -1,0 +1,55 @@
+<?xml version="1.0"?>   <!-- xml格式声明-->
+<!-- 注意xacro不能直接用，必须要先将xacro转换成urdf才能使用 可以使用命令xacro /home/adams/chapt6/chapt6_ws/src/fishbot_description/urdf/first_robot.xacro 来生成对应urdf文件-->
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">  <!--xmlns:xacro="http://www.ros.org/wiki/xacro" 是告诉大家这个urdf使用了宏语言了-->
+     <!-- 引入描述质量和惯性的宏定义文件 -->
+    <xacro:include filename="$(find fishbot_description)/urdf/fishbot/common_inertia.xacro"/>   <!--$(find fishbot_description)表示找到share目录下的fishbot_description(功能包的名字)目录-->
+
+    <xacro:macro name="camera_xacro" params="xyz">
+        <link name="camera_link">  <!--子部件-->
+            <!--  部件的外观描述 -->
+            <visual>
+                <!-- 沿着自己几何中心的偏移和旋转量 xyz表示偏移 rpy表示旋转(欧拉角表示)-->
+                <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+                <!-- 几何形状 -->
+                <geometry>
+                    <!-- 正方体 0.02表示2cm-->
+                <box size="0.02 0.10 0.02"/>
+                </geometry>
+                <!-- 材质颜色描述 -->
+                <material name="black">
+                    <!-- 颜色 红绿蓝和透明度，取值范围0.0-1.0   0.5表示半透明 -->
+                    <color rgba="0.0 0.0 0.0 0.5"/>
+                </material>
+            </visual>
+            <!-- 碰撞属性 -->
+            <collision>
+                <!-- 沿着自己几何中心的偏移和旋转量 xyz表示偏移 rpy表示旋转(欧拉角表示)-->
+                <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+                <!-- 几何形状 -->
+                <geometry>
+                    <!-- 正方体 0.02表示2cm-->
+                <box size="0.02 0.10 0.02"/>
+                </geometry>
+                <!-- 材质颜色描述 -->
+                <material name="black">
+                    <!-- 颜色 红绿蓝和透明度，取值范围0.0-1.0   0.5表示半透明 -->
+                    <color rgba="0.0 0.0 0.0 0.5"/>
+                </material>
+            </collision>
+
+            <!-- 设置质量和惯性 -->
+            <xacro:box_inertia m="0.1" w="0.02" h="0.10" d="0.02" />
+        </link>
+        
+        <!-- 机器人的关节，用于组合机器人的部件，此处将camera_link和base_link进行组合 -->
+        <joint name="camera_jonit" type="fixed">  <!--fixed表示固定死的-->
+            <!-- 目前的意思表示将camera_link固定在base_link上面 -->
+            <parent link="base_link"/> <!--父部件-->
+            <child link="camera_link"/> <!--子部件-->
+            <!-- 固定的位置，偏移和旋转 -->
+            <origin xyz="${xyz}" rpy="0.0 0.0 0.0"/>
+        </joint>
+    </xacro:macro>
+</robot>
+
+

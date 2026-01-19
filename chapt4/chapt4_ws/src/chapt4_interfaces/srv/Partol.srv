@@ -1,0 +1,6 @@
+float32 target_x  #目标点x位置
+float32 target_y  #目标点y位置
+---
+int8 SUCCESS=1
+int8 FAIL=0
+int8 result  #结果 SUCCESS / FAIL 取其一

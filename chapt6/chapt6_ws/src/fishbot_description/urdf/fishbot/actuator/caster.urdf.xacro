@@ -1,0 +1,68 @@
+<?xml version="1.0"?>   <!-- xml格式声明-->
+<!-- 传感器xacro的定义 -->
+<!-- 注意xacro不能直接用，必须要先将xacro转换成urdf才能使用 可以使用命令xacro /home/adams/chapt6/chapt6_ws/src/fishbot_description/urdf/first_robot.xacro 来生成对应urdf文件-->
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">  <!--xmlns:xacro="http://www.ros.org/wiki/xacro" 是告诉大家这个urdf使用了宏语言了-->
+     <!-- 引入描述质量和惯性的宏定义文件 -->
+    <xacro:include filename="$(find fishbot_description)/urdf/fishbot/common_inertia.xacro"/>   <!--$(find fishbot_description)表示找到share目录下的fishbot_description(功能包的名字)目录-->
+
+    <!-- 轮子部件  万向轮-->
+    <xacro:macro name="caster_xacro" params="caster_name xyz">
+        <gazebo reference="${caster_name}_link">  <!--reference表示参考的部件的名称-->
+            <!-- 摩擦系数 切向的，默认值是1.0 -->
+            <mu1 value="0" />
+            <!-- 摩擦系数 法向的，默认值是1.0 -->
+            <mu2 value="0" />
+            <!-- 接触的刚度系数 -->
+            <kp value="1000000000.0" />
+            <!-- 阻尼系数 默认值是1.0 -->
+            <kd value="1.0"/>
+        </gazebo>
+
+        <link name="${caster_name}_link">  <!--子部件-->
+            <!--  部件的外观描述 -->
+            <visual>
+                <!-- 沿着自己几何中心的偏移和旋转量 xyz表示偏移 rpy表示旋转(欧拉角表示)-->
+                <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/> 
+                <!-- 几何形状 -->
+                <geometry>
+                    <!-- 圆形 -->
+                    <sphere radius="0.016"/>
+                </geometry>
+                <!-- 材质颜色描述 -->
+                <material name="yellow">
+                    <!-- 颜色 红绿蓝和透明度，取值范围0.0-1.0 -->
+                    <color rgba="1.0 1.0 0.0 0.8"/>
+                </material>
+            </visual>
+            <!-- 碰撞属性 -->
+            <collision>
+                 <!-- 沿着自己几何中心的偏移和旋转量 xyz表示偏移 rpy表示旋转(欧拉角表示)-->
+                <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/> 
+                <!-- 几何形状 -->
+                <geometry>
+                    <!-- 圆形 -->
+                    <sphere radius="0.016"/>
+                </geometry>
+                <!-- 材质颜色描述 -->
+                <material name="yellow">
+                    <!-- 颜色 红绿蓝和透明度，取值范围0.0-1.0 -->
+                    <color rgba="1.0 1.0 0.0 0.8"/>
+                </material>
+            </collision>
+
+            <!-- 设置质量和惯性 -->
+            <xacro:sphere_inertia m="0.05" r="0.016"/>
+        </link>
+        
+        <!-- 机器人的关节，用于组合机器人的部件 -->
+        <joint name="${caster_name}_jonit" type="fixed">  <!--轮子可以转动，类型需要使用fixed-->
+            <!-- 目前的意思表示将imu_link固定在base_link上面 -->
+            <parent link="base_link"/> <!--父部件-->
+            <child link="${caster_name}_link"/> <!--子部件-->
+            <!-- 固定的位置，偏移和旋转    0.03表示将imu_link固定在base_link几何中心向上3cm的地方-->
+            <origin xyz="${xyz}" rpy="0.0 0.0 0.0"/>
+        </joint>
+    </xacro:macro>
+</robot>
+
+
