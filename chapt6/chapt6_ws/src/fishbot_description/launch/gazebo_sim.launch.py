@@ -40,6 +40,7 @@ def generate_launch_description():
         
     )
     
+    #启动gazebo，并加载指定的world，默认是custom_room.world文件
     action_launch_gazebo = launch.actions.IncludeLaunchDescription(
          launch.launch_description_sources.PythonLaunchDescriptionSource(
             [get_package_share_directory('gazebo_ros'), '/launch/', 'gazebo.launch.py']
@@ -48,6 +49,7 @@ def generate_launch_description():
          launch_arguments=[('world', default_gazebo_world_path), ('verbose', 'true')]  
     )
     
+    #将您在 URDF/Xacro 文件中定义的机器人模型实例化到 Gazebo 的仿真世界中
     action_spawn_entity = launch_ros.actions.Node(
         package="gazebo_ros",
         executable="spawn_entity.py",
@@ -69,10 +71,42 @@ def generate_launch_description():
     #     arguments=['-d', default_rviz_path]  
     # )
     
+    #加载并激活fishbot_joint_state_broadcaster 关节状态控制器
+    action_load_joint_state_controller = launch.actions.ExecuteProcess(
+        cmd = 'ros2 control load_controller fishbot_joint_state_broadcaster --set-state active'.split(' '),
+        output='screen'
+    )
+    
+    #加载并激活fishbot_effort_controller 力控制器
+    action_load_effort_controller = launch.actions.ExecuteProcess(
+        cmd = 'ros2 control load_controller fishbot_effort_controller --set-state active'.split(' '),
+        output='screen'
+    )
+    
+    #加载并激活fishbot_diff_drive_controller 两轮差速控制器
+    action_load_diff_drive_controller = launch.actions.ExecuteProcess(
+        cmd = 'ros2 control load_controller fishbot_diff_drive_controller --set-state active'.split(' '),
+        output='screen'
+    )
+    
     return launch.LaunchDescription([
         # actions动作
         action_declare_arg_mode_path,
         action_robot_state_publisher,
         action_launch_gazebo,
-        action_spawn_entity
+        action_spawn_entity,
+        #下面这个是注册一个动作监听事件，等到action_spawn_entity这个动作执行完退出之后再执行action_load_joint_state_controller动作
+        launch.actions.RegisterEventHandler( 
+            event_handler=launch.event_handlers.OnProcessExit(
+                target_action=action_spawn_entity,
+                on_exit=[action_load_joint_state_controller]
+            )
+        ),
+        #下面这个是注册一个动作监听事件，等到action_load_joint_state_controller这个动作执行完退出之后再执行action_load_effort_controller动作
+        launch.actions.RegisterEventHandler( 
+            event_handler=launch.event_handlers.OnProcessExit(
+                target_action=action_load_joint_state_controller,
+                on_exit=[action_load_diff_drive_controller]   #力控制器和两轮差速控制器都是控制机器人轮子的，只能同时执行一个动作
+            )
+        ),
     ])

@@ -16,9 +16,12 @@
 <xacro:include filename="$(find fishbot_description)/urdf/fishbot/actuator/caster.urdf.xacro"/>   <!--$(find fishbot_description)表示找到share目录下的fishbot_description(功能包的名字)目录-->
 
 <!-- 插件 控制机器人运动插件-->
-<xacro:include filename="$(find fishbot_description)/urdf/fishbot/plugins/gazebo_control_plugin.xacro"/>   <!--$(find fishbot_description)表示找到share目录下的fishbot_description(功能包的名字)目录-->
+<xacro:include filename="$(find fishbot_description)/urdf/fishbot/plugins/gazebo_control_plugin.xacro"/>   $(find fishbot_description)表示找到share目录下的fishbot_description(功能包的名字)目录
 <!-- 插件 机器人的传感器插件-->
 <xacro:include filename="$(find fishbot_description)/urdf/fishbot/plugins/gazebo_sensor_plugin.xacro"/>   <!--$(find fishbot_description)表示找到share目录下的fishbot_description(功能包的名字)目录-->
+<!-- 插件 使用ros2_control来控制机器人运动；其与gazebo中的两轮差速插件运动控制会有冲突，所以同时只能使用一个插件来控制机器人运动 -->
+<xacro:include filename="$(find fishbot_description)/urdf/fishbot/fishbot.ros2_control.xacro"/>   <!--$(find fishbot_description)表示找到share目录下的fishbot_description(功能包的名字)目录-->
+
 
 
 <!-- 调用宏 -->
@@ -33,6 +36,7 @@
 <xacro:caster_xacro caster_name="back_caster" xyz="-0.08 0.0 -0.076"/> <!--   -0.08 表示沿着X轴反方向偏移0.08 -0.076表示沿着Z轴向下偏移0.076-->
 
 <!-- 使用插件 -->
-<xacro:gazebo_control_plugin />
+<!-- <xacro:gazebo_control_plugin /> -->
 <xacro:gazebo_sensor_plugin />
+<xacro:fishbot_ros2_control />
 </robot>

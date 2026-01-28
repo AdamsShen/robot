@@ -40,6 +40,9 @@
             <!-- 设置质量和惯性 -->
             <xacro:box_inertia m="0.1" w="0.02" h="0.10" d="0.02" />
         </link>
+
+        <!-- 创建虚拟部件 -->
+        <link name="camera_optical_link"></link>
         
         <!-- 机器人的关节，用于组合机器人的部件，此处将camera_link和base_link进行组合 -->
         <joint name="camera_jonit" type="fixed">  <!--fixed表示固定死的-->
@@ -48,6 +51,14 @@
             <child link="camera_link"/> <!--子部件-->
             <!-- 固定的位置，偏移和旋转 -->
             <origin xyz="${xyz}" rpy="0.0 0.0 0.0"/>
+        </joint>
+        <!-- 虚拟部件的关节 -->
+        <joint name="camera_optical_jonit" type="fixed">  <!--fixed表示固定死的-->
+            <!-- 目前的意思表示将camera_optical_link固定在camera_link上面 -->
+            <parent link="camera_link"/> <!--父部件-->
+            <child link="camera_optical_link"/> <!--子部件-->
+            <!-- 固定的位置，偏移和旋转 -->
+            <origin xyz="0 0 0" rpy="${-pi/2} 0.0 ${-pi/2}"/>
         </joint>
     </xacro:macro>
 </robot>
